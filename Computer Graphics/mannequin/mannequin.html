@@ -1,0 +1,426 @@
+﻿<!DOCTYPE html>
+
+<html>
+	<head>
+		<script src="three.min.js"></script>
+		<script src="human.js"></script>
+	</head>
+	
+	<body>
+		<h1>"Шах с карти"<br></h1>
+
+		<script>
+			document.getElementsByTagName('h1')[0].style = 'color:white; text-align:center; font-size:1.75em';
+			
+			// рисувателно поле на цял екран
+			renderer = new THREE.WebGLRenderer({antialias:true});
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+			renderer.domElement.style = 'width:100%; height:100%; position:fixed; top:0; left:0; z-index:-1;';
+			
+			// сцена и камера
+			scene = new THREE.Scene();
+			camera = new THREE.PerspectiveCamera( 30, window.innerWidth/window.innerHeight, 0.1, 2000 );
+			camera.position.set(0,40,150);
+			camera.lookAt(new THREE.Vector3(0,-8,0));
+
+			// светлини
+			var light = new THREE.DirectionalLight('lightblue',0.8);
+			light.position.set(0,1,4);
+			scene.add(light);
+			scene.add( new THREE.AmbientLight('white',0.4) );
+			
+			// функция за анимиране на сцената
+			var t = 0; // време
+			function drawFrame()
+			{
+				requestAnimationFrame( drawFrame );
+				if (animate) animate(t++);
+				renderer.render( scene, camera );
+			}			
+			
+			// човечета
+			манекен1 = мъжествен();
+			манекен2 = мъжествен();
+			// тук се описват статичните елементи на позата
+			
+			//functions for animation
+			
+			function getReadyToJump (dx, obj)
+			{
+				obj.л_коляно.врът(0,0,60*(0.5+sin(5*dx-90)/2));
+				obj.л_крак.врът(0,0,-45*(0.5+sin(5*dx-90)/2));
+				
+				obj.д_коляно.врът(0,0,60*(0.5+sin(5*dx-90)/2));
+				obj.д_крак.врът(0,0,-45*(0.5+sin(5*dx-90)/2));
+				
+				obj.тяло.врът(0,0,-60*(0.5+sin(5*dx-90)/2));
+				obj.position.y += -0.26*(0.5 - (0.5+sin(5*dx+180)/2));
+			}
+			
+			//random objects
+			
+			function table(scale)
+			{
+				var table = new THREE.Object3D();
+				var material = new THREE.MeshPhongMaterial({color: 0x4d1a00});
+				var top = new THREE.Mesh(new THREE.BoxGeometry(10*scale,1/2*scale,10*scale), material);
+
+				for(var i = -1; i <= 1; i = i + 2)
+				{
+					for(var j = -1; j <= 1; j = j + 2)
+					{
+						var leg = new THREE.Mesh(new THREE.BoxGeometry(1/2*scale,5*scale,1/2*scale), material);
+						leg.position.y -= 2.5*scale;
+						leg.position.x -= j*3.75*scale;
+						leg.position.z -= i*3.75*scale;
+						table.add(leg);					
+					}
+
+				}
+				
+				table.add(top);
+				return table;
+			}
+			
+			function chair(scale)
+			{
+				var table = new THREE.Object3D();
+				var material = new THREE.MeshPhongMaterial({color: 0x7c4d3b});
+				var top = new THREE.Mesh(new THREE.BoxGeometry(5*scale,1/2*scale,5*scale), material);
+
+				for(var i = -1; i <= 1; i = i + 2)
+				{
+					for(var j = -1; j <= 1; j = j + 2)
+					{
+						var leg = new THREE.Mesh(new THREE.BoxGeometry(1/2*scale,5*scale,1/2*scale), material);
+						leg.position.y -= 2.5*scale;
+						leg.position.x -= j*3.75*scale/2;
+						leg.position.z -= i*3.75*scale/2;
+						table.add(leg);					
+					}
+
+				}
+				
+				var oblegalka = new THREE.Mesh(new THREE.BoxGeometry(1/2*scale,8*scale,5*scale), material);
+				oblegalka.position.x -=5*scale/2 - 1/4*scale;
+				oblegalka.position.y += 8*scale/2;
+				table.add(oblegalka);
+				table.add(top);
+				return table;
+			}
+			
+			function cardPir(scale)
+			{
+				var c = new THREE.Object3D();
+				var material = new THREE.MeshPhongMaterial({vertexColors: THREE.FaceColors});
+				
+				var geometry = new THREE.BoxGeometry(3*scale,4*scale,0.01*scale);
+				
+				for(var i = 10; i < 12; i ++)
+				{
+					geometry.faces[i].color.setHex(0x800000);
+				}
+				
+				var box = new THREE.Mesh(geometry, material);
+				box.rotation.x += rad(30);
+				box.position.z -= scale;
+				c.add(box);
+				box = new THREE.Mesh(geometry, material);
+				box.rotation.x -= rad(30);
+				box.rotation.y += rad(180);
+				box.position.z += scale;
+				c.add(box);
+				return c;
+			}
+			
+			function cardPiramid(scale, height, topless)
+			{
+				var cardHeight = 3*scale;
+				var cardWidth = 4*scale;
+				var pir = new THREE.Object3D();
+				for(var col = 1; col <= height-topless; col++)
+				{
+					for(var row = col; row <=height; row++)
+					{
+						var cards = cardPir(scale);
+						cards.position.z -= row*cardWidth - col*cardWidth/2;
+						cards.position.y += col*cardHeight;
+						pir.add(cards);
+					}
+				}
+				return pir;
+			}
+			
+			function chessboard(scale)
+			{
+				var chess = new THREE.Object3D();
+				var material1 = new THREE.MeshPhongMaterial({color: 0xeeeeee});
+				var material2 = new THREE.MeshPhongMaterial({color: 0x000000});
+				box = new THREE.BoxGeometry(1*scale,0.25*scale,1*scale);
+				var mat;
+				for(var i = 0; i < 8; i++)
+				for(var j = 0; j < 8; j++)
+				{
+					if((j + i)%2 != 0)
+						mat = material1;
+					else
+						mat = material2;
+					
+					var mesh = new THREE.Mesh(box,mat);
+					mesh.position.x += i*scale;
+					mesh.position.z += j*scale;
+					chess.add(mesh);
+				}
+				return chess;
+			}
+			
+			function peshka(scale, white)
+			{
+				var pesh = new THREE.Object3D(); 
+				var mat;
+				var geom = new THREE.ConeGeometry(1.5*scale, 6*scale, 24, 1);
+				if(white)
+					mat = new THREE.MeshPhongMaterial({color: 0xeeeeee});
+				else
+					mat = new THREE.MeshPhongMaterial({color: 0x222222});
+				var mesh = new THREE.Mesh(geom,mat);
+				pesh.add(mesh);
+				
+				geom = new THREE.SphereGeometry(1.2*scale,32,32);
+				mesh = new THREE.Mesh(geom,mat);
+				mesh.position.y += 1.8*scale;
+				pesh.add(mesh);
+				return pesh;
+			}
+			
+			function rook(scale, white)
+			{
+				var tosh = new THREE.Object3D(); 
+				var mat;
+				var geom;
+				var mesh;
+				if(white)
+					mat = new THREE.MeshPhongMaterial({color: 0xeeeeee});
+				else
+					mat = new THREE.MeshPhongMaterial({color: 0x222222});
+				
+				geom = new THREE.CylinderGeometry(1*scale, 1.75*scale, 5.5*scale,20,20);
+				mesh = new THREE.Mesh(geom, mat);
+				tosh.add(mesh);
+				
+				geom = new THREE.CylinderGeometry(1.6*scale, 1.6*scale, 1*scale, 20, 20);
+				mesh = new THREE.Mesh(geom, mat);
+				mesh.position.y+= 3*scale;
+				tosh.add(mesh);
+				
+				return tosh;			
+			}
+			
+			function king(scale, white)
+			{
+				var kosh = new THREE.Object3D(); 
+				var mat;
+				var geom;
+				var mesh;
+				if(white)
+					mat = new THREE.MeshPhongMaterial({color: 0xeeeeee});
+				else
+					mat = new THREE.MeshPhongMaterial({color: 0x222222});
+				
+				geom = new THREE.CylinderGeometry(1*scale, 1.75*scale, 6*scale,20,20);
+				mesh = new THREE.Mesh(geom, mat);
+				kosh.add(mesh);
+				
+				geom = new THREE.CylinderGeometry(1.5*scale, 1*scale, 2*scale,20,20);
+				mesh = new THREE.Mesh(geom, mat);
+				mesh.position.y += 4*scale;
+				kosh.add(mesh);
+				
+				geom = new THREE.BoxGeometry(0.5*scale,4*scale,0.5*scale);
+				mesh = new THREE.Mesh(geom, mat);
+				mesh.position.y += 6*scale;
+				kosh.add(mesh);
+				
+				geom = new THREE.BoxGeometry(2*scale,0.5*scale,0.5*scale);
+				mesh = new THREE.Mesh(geom, mat);
+				mesh.position.y += 7*scale;
+				kosh.add(mesh);
+				
+				
+				return kosh;			
+			}
+			
+			function setChess()
+			{
+				function position(x, y, pic)
+				{
+					pic.position.x +=-5 + 2*y;
+					pic.position.z +=2 - 2*x;
+					pic.position.y +=2.5;
+				}
+				var piece;
+				
+				piece = king(0.4, true);
+				position(2,5,piece);
+				scene.add(piece);
+				
+				piece = king(0.4, false);
+				position(0,7,piece);
+				scene.add(piece);
+				
+				piece = peshka(0.4, false);
+				position(0,6,piece);
+				scene.add(piece);
+				
+				piece = peshka(0.4, true);
+				position(6,6,piece);
+				scene.add(piece);
+				
+				piece = peshka(0.4, true);
+				position(2,4,piece);
+				scene.add(piece);
+				
+				piece = rook(0.4, true);
+				position(2,1,piece);
+				scene.add(piece);
+				
+				piece = peshka(0.4, false);
+				position(5,1,piece);
+				scene.add(piece);
+				
+				piece = peshka(0.4, false);
+				position(4,2,piece);
+				scene.add(piece);
+				
+				piece = rook(0.4, false);
+				position(4,7,piece);
+				scene.add(piece);
+				
+				piece = rook(0.4, true);
+				position(1,1,piece);
+				scene.add(piece);
+				
+			}
+			
+			//pre-set-up
+			
+			var chair1 = chair(2.7);
+			var chair2 = chair(2.7);
+			
+			chair1.position.x -= 35;
+			chair1.position.y -= 10;
+			
+			chair2.position.x += 35;
+			chair2.position.y -= 10;
+			chair2.rotation.y += rad(180);
+			
+			var table1 = table(5);
+			scene.add(chair1);
+			scene.add(chair2);
+			scene.add(table1);
+			
+			var piramid = cardPiramid(1,5, true);
+			piramid.position.set(-17,0,10);
+			scene.add(piramid);
+			
+			var chess = chessboard(2);
+			chess.position.y += 1.2;
+			chess.position.z -= 12;
+			chess.position.x -= 5;
+			scene.add(chess);
+			
+			//pieces
+			
+			setChess();
+			
+			//maneken1
+			
+			манекен1.position.x -=35;
+			манекен1.position.y -= 6;
+			
+			манекен1.л_крак.врът(0,0,-90);
+			манекен1.д_крак.врът(0,0,-90);
+			
+			манекен1.л_коляно.врът(0,0,90);
+			манекен1.д_коляно.врът(0,0,90);
+			
+			манекен1.д_крак.врът(0, 10, -100);
+			манекен1.д_коляно.врът(110, 0, 0);
+			манекен1.д_глезен.врът(-90, 0, 0);
+			
+			манекен1.л_ръка.врът(0,0,-60);
+			манекен1.д_ръка.врът(0,0,-60);
+			
+			манекен1.л_лакът.врът(0,0,-60);
+			манекен1.д_лакът.врът(0,0,-60);
+			
+			манекен1.тяло.врът(0, 0, 10);
+			
+			
+			var material = new THREE.MeshPhongMaterial({vertexColors: THREE.FaceColors});
+			var geometry = new THREE.BoxGeometry(3,4,0.01);
+			
+			geometry.faces[10].color.setHex(0x800000);
+			geometry.faces[11].color.setHex(0x800000);
+			
+			var box = new THREE.Mesh(geometry, material);
+			box.position.y += 5;
+			box.rotation.z -= rad(135);
+			box.rotation.x -= rad(180);
+			
+			манекен1.л_китка.add(box);
+			box = new THREE.Mesh(geometry, material);
+			box.position.y += 5;
+			box.rotation.z -= rad(45);
+			манекен1.д_китка.add(box);
+			
+			
+			//манекен2
+			
+			манекен2.position.x +=35;
+			манекен2.position.y -= 6;
+			манекен2.rotation.y += rad(180);
+			
+			манекен2.л_крак.врът(0,0,-90);
+			манекен2.д_крак.врът(0,0,-90);
+			
+			манекен2.л_коляно.врът(0,0,120);
+			манекен2.д_коляно.врът(0,0,120);
+			
+			манекен2.тяло.врът(0,0,-32);
+			
+			манекен2.л_ръка.врът(0,0,-60);
+			манекен2.д_ръка.врът(0,0,-60);
+			
+			манекен2.л_лакът.врът(0,0,-60);
+			манекен2.д_лакът.врът(0,-20,-140);
+			манекен2.д_китка.врът(0,90,0);
+			
+			манекен2.глава.врът(0,0,-15);
+			манекен2.врат.врът(0,0,-10);
+			// анимация на човечето
+			animate = function (t)
+			{
+				// тук се описват динамичните елементи на позата
+				// като променливата t е номер на кадър, като се
+				// очаква 1 секунда да е приблизително 60 кадъра
+				манекен1.д_глезен.врът(-90, 5*sin(t), 20*sin(3*t));
+				манекен1.глава.врът(0, 10*sin(2*t), 0);
+				манекен1.тяло.врът(0, sin(t), 10);
+				манекен1.л_ръка.врът(0,10 - sin(2*t),-55 + sin(2*t));
+				манекен1.д_ръка.врът(0, - 15 + sin(2*t),-55 + sin(2*t));
+				манекен1.л_коляно.врът(0,sin(2*t),90 + 5*sin(2*t));
+				
+				манекен2.л_китка.врът(0,0,-20+Math.abs(20*sin(5*t)));
+				манекен2.д_лакът.врът(0,-16 + 3*sin(2*t),-140);
+				манекен2.глава.врът(0,2*sin(2*t),-15);
+				манекен2.л_коляно.врът(0,0,110 + 10*sin(2*t));
+				манекен2.д_коляно.врът(0,0,110 + 10*sin(2*t+180));
+				scene.rotation.y +=0.002;
+			}
+
+			drawFrame();
+		</script>
+	</body>
+</html>

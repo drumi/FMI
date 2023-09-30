@@ -1,0 +1,612 @@
+﻿<!DOCTYPE html>
+
+<!--
+	Това е демо-шаблон на първото домашно задание по ОКГ.
+	Вижте коментарите във файла, за да видите къде да променяте.
+	
+	Показване/скриване на рамката става с натискане на клавиш
+	или с кликване на миши бутон.
+-->
+	
+<html>
+	<head>
+		<script src="three.min.js"></script>
+		<script src="hangul.js"></script>
+	</head>
+	
+	<body onload="main()">
+		<h1>Symbol</h1>
+
+		<!-- В този script таг напишете кода за създаване на
+		думата, изписана на хангъл. Кодът по-долу е примерен.
+		Махнете го и сложете вашия код на негово място. -->
+		<script>
+			
+			//1st
+			//orientation point is centre
+			function drawO(x, y, z, scale, depth, obj)
+			{	
+				scale = scale/2; //from diameter into radius
+				var extrudeSettings = { amount: depth, bevelEnabled: false, curveSegments: 64};
+				var smallX = 60*scale;
+				var smallY = 50*scale;
+				var bigX = 82*scale;
+				var bigY = 67*scale;
+				
+				var offset = -bigX;
+				
+				//outer ellipse
+				var Oshape = new THREE.Shape();
+				Oshape.moveTo(x + bigX, y);
+				Oshape.absellipse(x + bigX+offset, y, bigX, bigY, 0, 2*Math.PI, true);
+				
+				//inner ellipse
+				var hole = new THREE.Path();
+				offset = - smallX;
+				hole.moveTo(x + smallX, y);
+				hole.absellipse(x + smallX +offset, y, smallX, smallY, 0, 2*Math.PI, true);
+				
+				Oshape.holes.push(hole);
+				
+				var geometry = new THREE.ExtrudeGeometry( Oshape, extrudeSettings );
+				var material = new THREE.MeshPhongMaterial();
+				var mesh = new THREE.Mesh(geometry, material);
+				mesh.position.z = z - depth/2;
+				obj.add(mesh);
+				
+				//orientation point is bottom left
+				function drawChengel(x, y, z, scale, depth, obj)
+				{
+					var extrudeSettings = { amount: depth, bevelEnabled: false, curveSegments: 64};
+					var heightToTopLeft = 11*scale;
+					var width = 10*scale;
+					var diameter = 2*scale;
+					
+					var chengel = new THREE.Shape();
+					
+					chengel.moveTo(x,y);
+					var cpX = x + heightToTopLeft/2;
+					var cpY = y + heightToTopLeft/2;
+					var cpX2 = x + width * 2;
+					var cpY2 = y + heightToTopLeft;
+					var cpX3 = x - diameter;
+					var cpY3 = y + heightToTopLeft + diameter;
+					chengel.quadraticCurveTo(cpX, cpY, x, y + heightToTopLeft);
+					chengel.quadraticCurveTo(cpX3, cpY3, x + diameter, y + heightToTopLeft + diameter);
+					chengel.quadraticCurveTo(cpX2, cpY2, x + width, y);
+					chengel.lineTo(x,y);
+					
+					var geometry = new THREE.ExtrudeGeometry( chengel, extrudeSettings );
+					var material = new THREE.MeshPhongMaterial();
+					var mesh = new THREE.Mesh(geometry, material);
+					mesh.position.z = z - depth/2;
+					obj.add(mesh);
+				}
+				
+				
+				var chengelWidth = 10*scale;
+				var epsilon = (bigY - smallY)/10;
+				drawChengel(x - chengelWidth, y + bigY - epsilon, z, 2*scale, depth, obj);
+			}
+			
+			
+			//2nd
+			//orientation point is from top left
+			function drawRightThing(x, y, z, scale, depth, sad, obj)
+			{
+				var extrudeSettings = { amount: depth, bevelEnabled: false, curveSegments: 64};
+				var rightStuff = new THREE.Shape();
+				var smallWidth = 6*scale;
+				var bigWidth = 12*scale;
+				var fromBegToTopLineX = 12*scale;
+				var bottomLine = 35*scale;
+				var topLine = 15*scale;
+				var endRadius = 6*scale;
+				
+				rightStuff.moveTo(x,y);
+				var destX = x + fromBegToTopLineX;
+				var destY = y + bigWidth - smallWidth;
+				var cpx1 = (destX - x)/2 + x;
+				var cpy1 = y;
+				var cpx2 = cpx1;
+				var cpy2 = destY;
+				rightStuff.bezierCurveTo(cpx1,cpy1,cpx2,cpy2,destX,destY);
+				rightStuff.lineTo(destX + topLine, destY);
+
+				destY = destY - bigWidth;
+				if(sad)
+					destX = x + bottomLine;
+				else
+					destX = destX + topLine;
+	
+				var cpX1 = destX + endRadius*2;
+				var cpY1 = destY + bigWidth;
+				var cpX2 = destX + endRadius*2;
+				var cpY2 = destY;
+				rightStuff.bezierCurveTo(cpX1, cpY1, cpX2, cpY2, destX, destY);
+				
+				rightStuff.lineTo(x,y - smallWidth);
+				rightStuff.lineTo(x,y);
+				
+				var geometry = new THREE.ExtrudeGeometry(rightStuff, extrudeSettings);
+				var material = new THREE.MeshPhongMaterial();
+				var mesh = new THREE.Mesh(geometry, material);
+				mesh.position.z = z - depth/2;
+				obj.add(mesh);
+			}
+			
+			//orientation point from top right/left
+			function drawWood(x, y, z, scale, depth, obj)
+			{
+				var extrudeSetting = {amount: depth, bevelEnabled: false, curveSegments: 64};
+				var wood = new THREE.Shape();
+
+				var width = 12*scale;
+				var height = 46*scale;
+				var distanceToFirstCurve = 43*scale;
+				var distanceToSecondCurve = 7*scale;
+			
+				wood.moveTo(x + width, y);
+				wood.lineTo(x,y);
+				wood.lineTo(x, y - distanceToFirstCurve);
+
+				
+				var destX = x + width;
+				var destY = y - distanceToSecondCurve;
+				var cpX1 = x;
+				var cpY1 = y - distanceToFirstCurve - (distanceToFirstCurve - distanceToSecondCurve);
+				var cpX2 = destX;
+				var cpY2 = destY - (distanceToFirstCurve - distanceToSecondCurve);
+				
+				
+				wood.bezierCurveTo(cpX1, cpY1, cpX2, cpY2, destX, destY);
+				wood.lineTo(x + width, y);
+				var geometry = new THREE.ExtrudeGeometry(wood, extrudeSetting);
+				var material = new THREE.MeshPhongMaterial();
+				var mesh = new THREE.Mesh(geometry, material);
+				mesh.position.z = z - depth/2;
+				obj.add(mesh);
+			}
+			
+			//orientation point taken from top left
+			function drawTopSock (x, y, z, scale, depth, obj)
+			{
+				var extrudeSetting = {amount: depth, bevelEnabled: false, curveSegments: 64};
+				var sock = new THREE.Shape();
+				
+				var miniHeight = 8*scale;
+				var height = 16*scale;
+				var intrernalWidth = 12*scale;
+				var trueWidth = 36*scale;
+				var distanceBetweenCurves = 28*scale;
+				var goingDown = 6*scale;
+				
+				sock.moveTo(x, y);
+				sock.lineTo(x, y + miniHeight);
+			
+				var destX = x - distanceBetweenCurves;
+				var destY = y + height;
+				var cpX1 = x;
+				var cpY1 = destY - (destY - y )*0.5;
+				var cpX2 = x;
+				var cpY2 = destY;
+				
+				sock.bezierCurveTo(cpX1, cpY1, cpX2, cpY2, destX,destY);
+				
+				cpX1 = destX - (trueWidth - distanceBetweenCurves)*2;
+				cpY1 = destY;
+				cpX2 = destX - (trueWidth - distanceBetweenCurves);
+				cpY2 = destY - goingDown/2;
+				destX = destX;
+				destY = destY - goingDown;
+				
+				sock.bezierCurveTo(cpX1, cpY1, cpX2, cpY2, destX,destY);
+				
+				cpX2 = x - intrernalWidth;
+				cpY2 =  y + (destY - y)/2;
+				
+				cpX1 = destX + (x - destX - intrernalWidth)/2;
+				cpY1 = cpY2 + (destY - cpY2)/2
+				
+				destX = x - intrernalWidth;
+				destY = y;
+				
+				sock.bezierCurveTo(cpX1, cpY1, cpX2, cpY2, destX,destY);
+				
+				sock.lineTo(x,y);
+				
+				var geometry = new THREE.ExtrudeGeometry(sock, extrudeSetting);
+				var material = new THREE.MeshPhongMaterial();
+				var mesh = new THREE.Mesh(geometry, material);
+				mesh.position.z = z - depth/2;
+				obj.add(mesh);
+			}
+			
+			//orientation point is somewhere near bottom left
+			function drawSekira(x, y, z, scale, depth, obj)
+			{
+				scale = scale/2;
+				var width = 12*scale;
+				var heightV = 110*scale;
+				var woodHeight = 46*scale;
+				var distanceToRighty = 10*scale;
+				var heightToRigthy = 6*scale;
+				var correction = (heightV - woodHeight)/2;
+				
+				var geom = new THREE.BoxGeometry(width, heightV - woodHeight, depth);
+				var mat = new THREE.MeshPhongMaterial();
+				var mes = new THREE.Mesh(geom, mat);
+				mes.position.x += width/2;
+				mes.position.x += x;
+				mes.position.y += y;
+				mes.position.z += z;
+				obj.add(mes);
+				
+				drawWood(x,y - (heightV - woodHeight)/2,z,scale,depth,obj);
+				drawRightThing(x + distanceToRighty + width,y - correction,z,scale,depth,false,obj);
+				
+				geom = new THREE.BoxGeometry(distanceToRighty, heightToRigthy, depth);
+				mat = new THREE.MeshPhongMaterial();
+				mes = new THREE.Mesh(geom, mat);
+				mes.position.x += width + distanceToRighty/2;
+				mes.position.y -= heightToRigthy/2 + correction;
+				mes.position.x += x;
+				mes.position.y += y;
+				mes.position.z += z;
+				obj.add(mes);
+				
+				drawTopSock(x + width, y + (heightV-woodHeight)/2,z,scale,depth,obj);
+			}
+			
+			//3rd
+			
+			//orientation taken from top left
+			function drawSabretooth(x,y,z,scale,depth,obj)
+			{
+				var extrudeSetting = {amount: depth, bevelEnabled: false, curveSegments: 64};
+				var tooth = new THREE.Shape();
+				
+				var smallerHeight = 77*scale;
+				var biggerHeight = 84*scale;
+				var width = 100*scale;
+				var smallerWidth = 14*scale;
+				var diameter = 2*scale;
+				
+				tooth.moveTo(x,y);
+				var destX = x - width;
+				var destY = y - biggerHeight;
+				var cpX1 = x;
+				var cpY1 = y - biggerHeight/2;
+				var cpX2 = x - width/1.5;
+				var cpY2 = destY;
+				
+				tooth.bezierCurveTo(cpX1, cpY1, cpX2, cpY2, destX, destY);
+				
+				
+				cpX1 = destX - diameter*2;
+				cpY1 = destY;
+				cpX2 = cpX1;
+				cpY2 = cpY2;
+				destX = destX;
+				destY = destY + diameter;
+				
+				tooth.bezierCurveTo(cpX1, cpY1, cpX2, cpY2, destX, destY);
+				
+				var currentX = destX;
+				var currentY = destY;
+				
+				destX = x - smallerWidth;
+				destY = y - (biggerHeight - smallerHeight);
+				cpX1 = currentX + (destX - currentX)/3;
+				cpY1 = currentY + (destY - currentY)/6;
+				cpX2 = currentX + 2*(destX - currentX)/3;
+				cpY2 = currentY + (destY - currentY)/3;
+				
+				tooth.bezierCurveTo(cpX1, cpY1, cpX2, cpY2, destX, destY);
+				
+				tooth.lineTo(x - smallerWidth*2, y);
+				
+				cpX1 = x - smallerWidth;
+				cpY1 = y;
+				cpX2 = x;
+				cpY2 = y + smallerWidth/3;
+				tooth.bezierCurveTo(cpX1,cpY1,cpX2,cpY2,x,y);
+				
+				var distanceToRear = 24*scale;
+				var rearWidth = 5*scale;
+				var geom = new THREE.BoxGeometry(distanceToRear, rearWidth, depth);
+				var mat = new THREE.MeshPhongMaterial();
+				var mes = new THREE.Mesh(geom, mat);
+	
+				mes.position.x += x - distanceToRear + distanceToRear/2;
+				mes.position.y += y - width/2;
+				mes.position.z += z;
+				mes.rotation.z += - Math.PI/4;
+				obj.add(mes);
+				
+				var rear = new THREE.Object3D();
+				drawRightThing(0 ,0,0,scale*5/6,depth,true,rear);
+				
+				rear.position.set(x,y,z);
+				
+				rear.position.x -= distanceToRear*Math.sin(Math.PI/4)/2;
+				rear.position.y -= width/2;			
+				rear.rotation.z += - Math.PI/4;
+				obj.add(rear);
+				
+				var lengthBox = 43*scale + smallerWidth;
+				var widthBox = 7*scale;
+				geom = new THREE.BoxGeometry(lengthBox,  widthBox, depth);
+				rear = new THREE.Mesh(geom, mat);
+				rear.position.x += x - lengthBox/2 - smallerWidth/10;
+				rear.position.y += y - widthBox/2;
+				rear.position.z += z;
+				obj.add(rear);
+				
+				////
+				
+				var leg = new THREE.Shape();
+				leg.moveTo(x - lengthBox, y);
+				var cx = x - lengthBox;
+				var cy = y;
+				
+				var distanseToendP = 30*scale;
+				var distanseToCurve = 6*scale;
+				var wit = widthBox;
+				var biggerWit = 1.5*widthBox;
+				
+				leg.lineTo(cx - distanseToendP, cy);
+				
+				destY = cy - biggerWit;
+				destX = cx - distanseToCurve;
+				cpX1 = cx - distanseToendP - distanseToCurve/2;
+				cpY1 = cy;
+				cpX2 = cx - distanseToendP - distanseToCurve/2;
+				cpY2 = cy - wit;
+				
+				leg.bezierCurveTo(cpX1,cpY1,cpX2,cpY2,destX,destY);
+				
+				
+				cpX1 = cx - (cx - destX)/2;
+				cpY1 = destY;
+				cpX2 = cpX1;
+				cpY2 = cy - wit;
+				destX = cx;
+				destY = cy - wit;
+				
+				leg.bezierCurveTo(cpX1,cpY1,cpX2,cpY2,destX,destY);
+				
+				var geometry = new THREE.ExtrudeGeometry(tooth, extrudeSetting);
+				var material = new THREE.MeshPhongMaterial();
+				var mesh = new THREE.Mesh(geometry, material);
+				mesh.position.z = z - depth/2;
+				obj.add(mesh);
+				
+				geometry = new THREE.ExtrudeGeometry(leg, extrudeSetting);
+				mesh = new THREE.Mesh(geometry, material);
+				mesh.position.z = z - depth/2;
+				obj.add(mesh);
+			}
+			
+			//4th
+			function drawTheEzi(x,y,z,scale,depth,obj)
+			{
+				var woodWidth = 12*scale;
+				var height = 5*scale;
+				var widthToDownCurve = 84*scale;
+				var width = 90*scale;
+				var widthPeak = 10*scale;
+				drawWood(x - woodWidth,y,z,scale,depth,obj);
+
+				var extrudeSetting = {amount: depth, bevelEnabled: false, curveSegments: 64};
+				var krik = new THREE.Shape();
+				krik.moveTo(x,y);
+				
+				
+				var destx = x - 21*scale;
+				var desty = y + height;
+				var cpx1 = x;
+				var cpy1 = y + (desty - y)/2;
+				var cpx2 = x + (destx - x)/2;
+				var cpy2 = desty + (desty - y)/2;
+				krik.bezierCurveTo(cpx1,cpy1,cpx2,cpy2,destx,desty);
+				
+				krik.lineTo(destx - width, desty);
+				
+				var cx = destx - width;
+				var cy = desty;
+				
+				destx = cx + widthPeak;
+				desty = cy - 1.5*height;
+				cpx1 = cx - woodWidth;
+				cpy1 = cy;
+				cpx2 = cx - (destx - cx)/2;
+				cpy2 = cy - (cy - desty)/2;
+				krik.bezierCurveTo(cpx1,cpy1,cpx2,cpy2,destx,desty);				
+				
+				
+				cx = destx;
+				cy = desty;
+				destx = x - widthToDownCurve;
+				desty = y;
+				cpx1 =  cx + (destx - cx)/2;
+				cpy1 = cy - (desty - cy)/2;
+				cpx2 = cx + (destx - cx)/2;
+				cpy2 = desty;
+				krik.bezierCurveTo(cpx1,cpy1,cpx2,cpy2,destx,desty);
+				
+				var geometry = new THREE.ExtrudeGeometry(krik, extrudeSetting);
+				var material = new THREE.MeshPhongMaterial();
+				var mesh = new THREE.Mesh(geometry, material);
+				mesh.position.z = z - depth/2;
+				obj.add(mesh);
+			}
+			
+			//5th
+			
+			function drawLast(x,y,z,scale,depth,obj)
+			{
+			
+				var woodWidth = 12*scale;
+				var height = 5*scale;
+				var widthToDownCurve = 77*scale;
+				var width = 90*scale;
+				var widthPeak = 10*scale;
+
+				var extrudeSetting = {amount: depth, bevelEnabled: false, curveSegments: 64};
+				var krik = new THREE.Shape();
+				krik.moveTo(x,y);
+				
+				
+				var destx = x - 7*woodWidth/4;
+				var desty = y + height;
+				var cpx1 = x;
+				var cpy1 = y + (desty - y)/2;
+				var cpx2 = x + (destx - x)/2;
+				var cpy2 = desty + (desty - y)/2;
+				krik.bezierCurveTo(cpx1,cpy1,cpx2,cpy2,destx,desty);
+				
+				krik.lineTo(destx - width, desty);
+				
+				var cx = destx - width;
+				var cy = desty;
+				
+				destx = cx + widthPeak;
+				desty = cy - 1.5*height;
+				cpx1 = cx - woodWidth;
+				cpy1 = cy;
+				cpx2 = cx - (destx - cx)/2;
+				cpy2 = cy - (cy - desty)/2;
+				krik.bezierCurveTo(cpx1,cpy1,cpx2,cpy2,destx,desty);				
+				
+				
+				cx = destx;
+				cy = desty;
+				destx = x - widthToDownCurve;
+				desty = y;
+				cpx1 =  cx + (destx - cx)/2;
+				cpy1 = cy - (desty - cy)/2;
+				cpx2 = cx + (destx - cx)/2;
+				cpy2 = desty;
+				krik.bezierCurveTo(cpx1,cpy1,cpx2,cpy2,destx,desty);
+				
+				krik.lineTo(x - woodWidth, y);
+				cx = x- woodWidth;
+				cy = y;
+				var hait = 55*scale;
+				var weit = 15*scale;
+				
+				destx = cx - weit;
+				desty = cy - hait;
+				cpx1 = cx - weit/3;
+				cpy1 = cy - 2*hait/3;
+				krik.quadraticCurveTo(cpx1,cpy1,destx,desty);
+				
+				var smalwit = 5*scale;
+				krik.lineTo(destx + smalwit, desty);
+				cx= destx + smalwit;
+				cy = desty;
+				
+				destx = x;
+				desty = y;
+				cpx1 = cx + woodWidth*2;
+				cpy1 = cy + hait/1.25;
+				krik.quadraticCurveTo(cpx1,cpy1,destx,desty);
+				
+				var rear = new THREE.Object3D();
+				drawRightThing(x - woodWidth/2,y - hait,z,scale*5/6,depth,true,rear);
+				obj.add(rear);
+				
+				var bigwith = 140*scale;
+				
+				var geom = new THREE.BoxGeometry(bigwith, height,depth);
+				var mat = new THREE.MeshPhongMaterial();
+				var mes = new THREE.Mesh(geom, mat);
+				mes.position.x += x - bigwith/2;
+				mes.position.y += y - hait - height/2;
+				mes.position.z += z;
+				obj.add(mes);
+				
+				var geometry = new THREE.ExtrudeGeometry(krik, extrudeSetting);
+				var material = new THREE.MeshPhongMaterial();
+				var mesh = new THREE.Mesh(geometry, material);
+				mesh.position.z = z - depth/2;
+				obj.add(mesh);
+				///
+				var cric = new THREE.Shape();
+				cx = x - bigwith
+				cy = y - hait;
+				cric.moveTo(cx,cy);
+				
+				widthPeak *= 1.1;
+				destx = cx + widthPeak;
+				desty = cy - 1.5*height;
+				cpx1 = cx - woodWidth;
+				cpy1 = cy;
+				cpx2 = cx - (destx - cx)/1.5;
+				cpy2 = cy - (cy - desty)/1.5;
+				cric.bezierCurveTo(cpx1,cpy1,cpx2,cpy2,destx,desty);				
+				
+				
+				var oldcx =cx;
+				var oldcy =cy;
+				cx = destx;
+				cy = desty;
+				destx = oldcx + widthToDownCurve/2;
+				desty = oldcy - height;
+				cpx1 =  cx + (destx - cx)/2;
+				cpy1 = cy - (desty - cy)/2;
+				cpx2 = cx + (destx - cx)/2;
+				cpy2 = desty;
+				cric.bezierCurveTo(cpx1,cpy1,cpx2,cpy2,destx,desty);
+				
+				geometry = new THREE.ExtrudeGeometry(cric, extrudeSetting);
+				mesh = new THREE.Mesh(geometry, material);
+				mesh.position.z = z - depth/2;
+				obj.add(mesh);
+			}
+			
+			
+			// Добавяме ги към обекта word (името е фиксирано).
+			//box range -10 10 on y and -20 20 on x
+			//fix positions and scaling later!
+			var temp = new THREE.Object3D();
+			var depth = 11;
+			
+			//Drawing O
+			drawO(12, -6.5, 0, 0.105, depth, temp);
+			word.add(temp);
+			
+			//Drawing Vertical symbol
+			temp = new THREE.Object3D();
+			drawSekira(14.5,5.5,0,0.18,depth,temp);
+			word.add(temp);
+			
+			//drawing Slide symbol
+			temp = new THREE.Object3D();
+			drawSabretooth(11,7,0,0.1,depth,temp);
+			word.add(temp);
+			
+			//drawing krik
+			temp = new THREE.Object3D();
+			drawTheEzi(-4,-3,0,0.11,depth,temp);
+			word.add(temp);
+
+			
+			//draw another krik
+			temp = new THREE.Object3D();
+			drawLast(-4,8.5,0,0.11,depth,temp);
+			word.add(temp);
+			
+			
+			// Файлът hangul.js се грижи да нарисува земята,
+			// да нарисува обекта word (с каквото пъхнете в
+			// него) и да показва/скрива рамката.
+			
+			// При правенето на глифовете, може да ги правите
+			// в някакъв друг мащаб или положение, но накрая
+			// с мащабиране и транслация ги направете да са
+			// в почти целия обем, определен от рамката.
+		</script>
+	</body>
+</html>

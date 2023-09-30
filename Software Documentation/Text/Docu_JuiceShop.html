@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juice Shop Documentation</title>
+
+    <style>
+
+        body {
+            background-color: rgb(26, 26, 26);
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            padding-top: 1vh;
+            color: #fff;
+            margin: 0;
+        }
+
+        h3 {
+            background-color: grey;
+            padding-left: 10px;
+        }
+
+        P {
+            line-height: 1.6;
+        }
+
+        img {
+            max-width: 60vw;
+        }
+
+        .header {
+            margin-bottom: 5vh;
+        }
+
+        .center-text {
+            text-align: center;
+        }
+
+        .white-text {
+            color: white;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+
+        .bigger-font {
+            font-size: 1.2rem;
+        }
+
+        .smaller-font {
+            font-size: 1rem;
+        }
+        
+        .card {
+            padding: 1%;
+            border-radius: 25px;
+            border-color: lightslategray;
+            border-width: 4px;
+            border-style: solid;
+            margin-bottom: 5vh;
+        }
+
+        .subsection {
+            padding-left: 3vw;
+        }
+
+        .image-container {
+            margin-bottom: 10vh;
+        }
+
+        #root {
+            display: flex;
+            align-items: stretch;
+        }
+
+        #side-bar {
+            background-color: black;
+            padding: 1rem;
+            display: inline-block;
+            position:fixed;
+            height: 100vh;
+        }
+
+        #side-bar a {
+            text-decoration: none;
+            display: flex;
+            padding: 10px;
+        }
+
+        #side-bar a:hover {
+            background-color: rgb(73, 73, 73);
+        }
+
+
+        #content-bar {
+            flex: 1;
+            padding-left: 4vw;
+            padding-right: 4vw;
+        }
+
+        #outer-list {
+            padding: 0;
+        }
+
+        #outer-list > li {
+            padding-left: 0;
+            margin-top: 1vh;
+            margin-bottom: 3vh;
+            list-style: none;
+        }
+
+        #inner-list > li {
+            color: white;
+        }
+
+    </style>
+
+    <script>
+        window.onload = () => {
+            const contentBar = document.getElementById("content-bar");
+            const sideBar = document.getElementById("side-bar");
+
+            contentBar.style.marginLeft = sideBar.offsetWidth + "px";
+        }
+    </script>
+</head>
+<body>
+    <div id="root">
+        <div id="side-bar">
+            <ul id="outer-list">
+                <li>
+                    <a class="white-text bigger-font" href="#overview">What is Juice Shop?</a>
+                </li>
+                <li>
+                    <a class="white-text  bigger-font" href="#getting-started">Getting started</a>
+                    <ul id="inner-list">
+                        <li>
+                            <a class="white-text smaller-font" href="#account">Creating an account</a>
+                        </li>
+                        <li>
+                            <a class="white-text smaller-font" href="#logging-in">Logging in</a>
+                        </li>
+                        <li>
+                            <a class="white-text smaller-font" href="#ordering">Ordering products</a>
+                        </li>
+                        <li>
+                            <a class="white-text smaller-font" href="#feedback">Leaving feedback</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div id="content-bar">
+            <h1 class="center-text header">Juice Shop Documentation</h1>
+            <div class="card">
+                <h2  id="overview" class="white-text">What is Juice Shop?</h2>
+                <p class="white-text">
+                    Juice shop was founded by Grek Juice in 1345. It is currently the biggest online shop in the world. It features a rich selection of juice-related items, such as juices, T-shirts, bikes, and many more. Juice shop was awarded <i><a href="https://owasp.org/www-project-juice-shop/">The most vulnerable web app</a></i> 34 times in a row.
+                </p>
+                <div class="underlink">
+                    <a href="https://juice-shop.herokuapp.com/#/">See our products</a>
+                </div>
+            </div>
+            <div class="card">
+                <h2 id="getting-started" class="white-text">Getting started</h2>
+                <br>
+                <div>
+                    <h3 id="account" class="white-text">Creating an account</h3>
+                    <p class="white-text">     
+                        Click on <i>Account -> Login</i>
+                    </p>
+                    <div class="image-container">
+                        <img src="to_login_menu.png">
+                    </div>
+                    <p class="white-text">     
+                        Click on <i>Not yet a customer?</i>
+                    </p>
+                    <div class="image-container">
+                        <img src="to__account_creation.png">
+                    </div>
+                    <p class="white-text">     
+                        Fill in the required details, then click on <i>Register</i>
+                    </p>
+                    <div class="image-container">
+                        <img src="filling_account_details.png">
+                    </div>
+                </div>
+                <br>
+                <div>
+                    <h3 id="logging-in" class="white-text">Logging in</h3>
+                    <p class="white-text">     
+                        Click on <i>Account -> Login</i>
+                    </p>
+                    <div class="image-container">
+                        <img src="to_login_menu.png">
+                    </div>
+                    <p class="white-text">     
+                        Enter your username and password, then click on <i>Log in</i>
+                    </p>
+                    <div class="image-container">
+                        <img src="log_in.png">
+                    </div>
+                </div>
+                <br>
+                <div>
+                    <h3 id="ordering" class="white-text">Ordering products</h3>
+                    <p class="white-text">
+                        To add a product to your basket, click on <i>Add to Basket</i>
+                        <div class="image-container">
+                            <img src="basket_button.png">
+                        </div>
+                    </p>
+                    <p class="white-text">
+                        To procceed with placing order, click on <i>Your Basket</i>
+                        <div class="image-container">
+                            <img src="basket_uptop.png">
+                        </div>
+                    </p>
+                    <p class="white-text">
+                        Click on <i>Checkout</i>
+                        <div class="image-container">
+                            <img src="checkout.png">
+                        </div>
+                    </p>
+                    <p class="white-text">
+                        Click on <i>Add New Address</i>
+                        <div class="image-container">
+                            <img src="address_button.png">
+                        </div>
+                    </p>
+                    <p class="white-text">
+                        Enter your address, then click on <i>Submit</i>
+                        <div class="image-container">
+                            <img src="adressing.png">
+                        </div>
+                    </p>
+                    <p class="white-text">
+                        Select the created address, then click on <i>Continue</i>
+                        <div class="image-container">
+                            <img src="address_select.png">
+                        </div>
+                    </p>
+                </p>
+                <p class="white-text">
+                    Select delivery method, then click on <i>Continue</i>
+                    <div class="image-container">
+                        <img src="delivery.png">
+                    </div>
+                </p>
+                <p class="white-text">
+                    Click on <i>Add new card</i>
+                    <div class="image-container">
+                        <img src="add_card.png">
+                    </div>
+                </p>
+                <p class="white-text">
+                    Enter your card information, then click on <i>Submit</i>
+                    <div class="image-container">
+                        <img src="entering_card.png">
+                    </div>
+                </p>
+                <p class="white-text">
+                    Select the created card, then click on <i>Continue</i>
+                    <div class="image-container">
+                        <img src="select_new_pay.png">
+                    </div>
+                </p>
+                <p class="white-text">
+                    To finalize your order, click on <i>Place your order and pay</i>
+                    <div class="image-container">
+                        <img src="place_order.png">
+                    </div>
+                </p>
+                </div>
+                <br>
+                <div>
+                    <h3 id="feedback" class="white-text">Leaving feedback</h3>
+                    <p class="white-text">
+                        <p class="white-text">     
+                            Click on the <i>burger menu</i>
+                        </p>
+                        <div class="image-container">
+                            <img src="burger_menu.png">
+                        </div>
+                    </p>
+                    <p class="white-text">
+                        <p class="white-text">     
+                            Click on <i>Customer Feedback</i>
+                        </p>
+                        <div class="image-container">
+                            <img src="feedback_option.png">
+                        </div>
+                    </p>
+                    <p class="white-text">
+                        <p class="white-text">     
+                            Enter your feedback, then click on <i>Submit</i>
+                        </p>
+                        <div class="image-container">
+                            <img src="submitting_feedback.png">
+                        </div>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
