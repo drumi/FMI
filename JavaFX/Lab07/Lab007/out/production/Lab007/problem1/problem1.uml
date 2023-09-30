@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>problem1</OriginalElement>
+  <nodes>
+    <node x="148.0540704692994" y="254.55377980048232">problem1.MySort</node>
+    <node x="-86.77537360023722" y="252.64476818410884">problem1.Sortable</node>
+    <node x="-86.77537360023722" y="-38.2281568143585">problem1.SortOrder.Downward</node>
+    <node x="-61.7239768635944" y="368.25444792597307">problem1.UserSort</node>
+    <node x="-18.556801349342436" y="87.39891818717419">problem1.SortOrder</node>
+    <node x="154.0540704692994" y="-38.2281568143585">problem1.SortOrder.Upward</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="problem1.SortOrder.Upward" target="problem1.SortOrder" relationship="INNER_CLASS">
+      <point x="-7.046929943044233E-5" y="38.50015681435849" />
+      <point x="241.05399999999997" y="64.0" />
+      <point x="69.943" y="64.0" />
+      <point x="-1.986506575661906E-4" y="-49.49991818717419" />
+    </edge>
+    <edge source="problem1.SortOrder.Downward" target="problem1.Sortable" relationship="REALIZATION">
+      <point x="87.00037360023721" y="1.568143585046755E-4" />
+      <point x="121.0" y="0.27200000000000557" />
+      <point x="121.0" y="-55.72800000000001" />
+      <point x="-104.275" y="-55.72800000000001" />
+      <point x="-104.275" y="279.64500000000004" />
+      <point x="-86.99962639976278" y="2.3181589116916257E-4" />
+    </edge>
+    <edge source="problem1.SortOrder.Downward" target="problem1.SortOrder" relationship="INNER_CLASS">
+      <point x="3.7360023721788593E-4" y="38.50015681435849" />
+      <point x="0.22500000000000142" y="64.0" />
+      <point x="69.943" y="64.0" />
+      <point x="-1.986506575661906E-4" y="-49.49991818717419" />
+    </edge>
+    <edge source="problem1.SortOrder.Upward" target="problem1.Sortable" relationship="REALIZATION">
+      <point x="-87.0000704692994" y="1.568143585046755E-4" />
+      <point x="121.0" y="0.27200000000000557" />
+      <point x="121.0" y="-55.72800000000001" />
+      <point x="-104.275" y="-55.72800000000001" />
+      <point x="-104.275" y="279.64500000000004" />
+      <point x="-86.99962639976278" y="2.3181589116916257E-4" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.9152506596306069" showDependencies="false" x="297.7171932656828" y="191.80673431734317" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
